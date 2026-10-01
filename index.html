@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="日本电影网 - 提供最新最全的日本电影资源，包括动漫、剧情、恐怖、爱情等各类日本电影在线观看。">
+    <meta name="keywords" content="日本电影网,日本电影,日本动漫,日本剧情片,日本恐怖片">
+    <meta name="author" content="日本电影网">
+    <title>日本电影网 - 最新日本电影在线观看 | ribendianyingwang-app.github.io</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* 樱花飘落动画 */
+        @keyframes sakura-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .sakura {
+            position: fixed;
+            top: -10px;
+            color: #ffb7c5;
+            font-size: 20px;
+            animation: sakura-fall linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 183, 197, 0.2);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffb7c5;
+            text-decoration: none;
+            text-shadow: 0 0 20px rgba(255, 183, 197, 0.5);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+        
+        .nav-links a:hover {
+            color: #ffb7c5;
+            background: rgba(255, 183, 197, 0.1);
+        }
+        
+        /* 主内容区 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1a0a0a 0%, #0a0a0a 50%, #0a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 183, 197, 0.1) 0%, transparent 70%);
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffb7c5, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #b0b0b0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, #ff6b9d, #ffb7c5);
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 107, 157, 0.6);
+        }
+        
+        /* 栏目通用样式 */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ffb7c5;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffb7c5, transparent);
+            margin: 1rem auto;
+        }
+        
+        /* 电影网格 */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .movie-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 183, 197, 0.1);
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 183, 197, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 183, 197, 0.2);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        
+        .movie-info {
+            padding: 1.5rem;
+        }
+        
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .movie-meta {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* 分类标签 */
+        .category-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .category-tag {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 183, 197, 0.1);
+            border: 1px solid rgba(255, 183, 197, 0.3);
+            border-radius: 25px;
+            color: #ffb7c5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tag:hover {
+            background: rgba(255, 183, 197, 0.2);
+            transform: scale(1.05);
+        }
+        
+        /* 排行榜 */
+        .ranking-list {
+            list-style: none;
+            counter-reset: ranking;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 183, 197, 0.1);
+        }
+        
+        .ranking-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 183, 197, 0.3);
+        }
+        
+        .ranking-item::before {
+            counter-increment: ranking;
+            content: counter(ranking);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffb7c5;
+            margin-right: 1.5rem;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .ranking-info h3 {
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+        
+        .ranking-info p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* 关于我们 */
+        .about-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .about-text {
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .stat-item {
+            padding: 2rem;
+            background: rgba(255, 183, 197, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 183, 197, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffb7c5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #888;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: #050505;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 183, 197, 0.2);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #ffb7c5;
+        }
+        
+        .copyright {
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        /* 移动端自适应 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section {
+                padding: 3rem 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .movie-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .movie-poster {
+                height: 200px;
+                font-size: 2.5rem;
+            }
+            
+            .ranking-item {
+                padding: 1rem;
+            }
+            
+            .ranking-item::before {
+                font-size: 1.5rem;
+                margin-right: 1rem;
+            }
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 结构化数据标记 */
+        .schema-markup {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/yazhou.js"></script>
+    <!-- 樱花飘落效果 -->
+    <div id="sakura-container"></div>
+    
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">🌸 日本电影网</a>
+            <ul class="nav-links">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#movies">最新电影</a></li>
+                <li><a href="#categories">电影分类</a></li>
+                <li><a href="#ranking">排行榜</a></li>
+                <li><a href="#about">关于我们</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 首页 -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>日本电影网</h1>
+            <p>探索日本电影的无限魅力，从经典到最新，从动漫到真人，尽在掌握</p>
+            <a href="#movies" class="cta-button">开始探索</a>
+        </div>
+    </section>
+    
+    <!-- 最新电影 -->
+    <section id="movies" class="section">
+        <h2 class="section-title">最新电影</h2>
+        <div class="movie-grid">
+            <div class="movie-card">
+                <div class="movie-poster">🎬</div>
+                <div class="movie-info">
+                    <div class="movie-title">你的名字</div>
+                    <div class="movie-meta">2016 | 动漫/爱情</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster">🎬</div>
+                <div class="movie-info">
+                    <div class="movie-title">千与千寻</div>
+                    <div class="movie-meta">2001 | 动漫/奇幻</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster">🎬</div>
+                <div class="movie-info">
+                    <div class="movie-title">寄生虫</div>
+                    <div class="movie-meta">2019 | 剧情/惊悚</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster">🎬</div>
+                <div class="movie-info">
+                    <div class="movie-title">七武士</div>
+                    <div class="movie-meta">1954 | 动作/冒险</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster">🎬</div>
+                <div class="movie-info">
+                    <div class="movie-title">罗生门</div>
+                    <div class="movie-meta">1950 | 剧情/悬疑</div>
+                </div>
+            </div>
+            <div class="movie-card">
+                <div class="movie-poster">🎬</div>
+                <div class="movie-info">
+                    <div class="movie-title">东京物语</div>
+                    <div class="movie-meta">1953 | 剧情/家庭</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 电影分类 -->
+    <section id="categories" class="section">
+        <h2 class="section-title">电影分类</h2>
+        <div class="category-tags">
+            <a href="#" class="category-tag">动漫电影</a>
+            <a href="#" class="category-tag">剧情片</a>
+            <a href="#" class="category-tag">恐怖片</a>
+            <a href="#" class="category-tag">爱情片</a>
+            <a href="#" class="category-tag">动作片</a>
+            <a href="#" class="category-tag">科幻片</a>
+            <a href="#" class="category-tag">喜剧片</a>
+            <a href="#" class="category-tag">纪录片</a>
+            <a href="#" class="category-tag">经典老片</a>
+            <a href="#" class="category-tag">独立电影</a>
+        </div>
+    </section>
+    
+    <!-- 排行榜 -->
+    <section id="ranking" class="section">
+        <h2 class="section-title">热门排行榜</h2>
+        <ol class="ranking-list">
+            <li class="ranking-item">
+                <div class="ranking-info">
+                    <h3>千与千寻</h3>
+                    <p>宫崎骏经典之作，奥斯卡最佳动画长片</p>
+                </div>
+            </li>
+            <li class="ranking-item">
+                <div class="ranking-info">
+                    <h3>你的名字</h3>
+                    <p>新海诚导演，票房突破250亿日元</p>
+                </div>
+            </li>
+            <li class="ranking-item">
+                <div class="ranking-info">
+                    <h3>七武士</h3>
+                    <p>黑泽明代表作，影史最伟大的电影之一</p>
+                </div>
+            </li>
+            <li class="ranking-item">
+                <div class="ranking-info">
+                    <h3>罗生门</h3>
+                    <p>威尼斯金狮奖获奖作品</p>
+                </div>
+            </li>
+            <li class="ranking-item">
+                <div class="ranking-info">
+                    <h3>东京物语</h3>
+                    <p>小津安二郎经典，家庭伦理巅峰之作</p>
+                </div>
+            </li>
+        </ol>
+    </section>
+    
+    <!-- 关于我们 -->
+    <section id="about" class="section">
+        <h2 class="section-title">关于日本电影网</h2>
+        <div class="about-content">
+            <p class="about-text">
+                日本电影网（ribendianyingwang-app.github.io）是专注于日本电影资源的专业平台，
+                致力于为电影爱好者提供最新、最全的日本电影资讯和观看指南。
+                从经典老片到最新上映，从动漫到真人电影，我们应有尽有。
+            </p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">10000+</div>
+                    <div class="stat-label">电影资源</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">导演作品</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">电影分类</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">首页</a>
+                <a href="#">最新电影</a>
+                <a href="#">电影分类</a>
+                <a href="#">排行榜</a>
+                <a href="#">关于我们</a>
+                <a href="#">免责声明</a>
+                <a href="#">隐私政策</a>
+            </div>
+            <p class="copyright">
+                © 2024 日本电影网 (ribendianyingwang-app.github.io) 保留所有权利
+            </p>
+            <p class="copyright">
+                关键词：日本电影网 | 日本电影 | 日本动漫 | 在线观看
+            </p>
+        </div>
+    </footer>
+    
+    <!-- 结构化数据 -->
+    <script type="application/ld+json" class="schema-markup">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "日本电影网",
+        "url": "https://ribendianyingwang-app.github.io",
+        "description": "日本电影网 - 提供最新最全的日本电影资源",
+        "keywords": "日本电影网,日本电影,日本动漫"
+    }
+    </script>
+    
+    <script>
+        // 樱花飘落效果
+        function createSakura() {
+            const container = document.getElementById('sakura-container');
+            const sakura = document.createElement('div');
+            sakura.className = 'sakura';
+            sakura.innerHTML = '🌸';
+            sakura.style.left = Math.random() * 100 + 'vw';
+            sakura.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            sakura.style.opacity = Math.random();
+            sakura.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            container.appendChild(sakura);
+            
+            setTimeout(() => {
+                sakura.remove();
+            }, 8000);
+        }
+        
+        // 每300ms创建一个樱花
+        setInterval(createSakura, 300);
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
